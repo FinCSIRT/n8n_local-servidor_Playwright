@@ -2,7 +2,7 @@ FROM ubuntu:24.04
 
 # Variables de entorno
 ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=America/Bogota
+ENV TZ=Europe/Budapest
 ENV NODE_ENV=production
 ENV N8N_USER_FOLDER=/opt/n8n
 ENV N8N_HOST=0.0.0.0
