@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   playwright-server:
-    # Usar versión más estable
+    # Use a more stable version
     image: mcr.microsoft.com/playwright:v1.56.0-noble
     container_name: playwright-browser-server
     restart: unless-stopped
@@ -11,7 +11,7 @@ services:
       - "3000:3000"
 
     environment:
-      - TZ=America/Bogota
+      - TZ=Europe/Budapest
       - NODE_ENV=production
       - DEBUG=pw:browser*
 
@@ -36,8 +36,8 @@ services:
       start_period: 45s
 
     networks:
-      - n8n-network  # <-- misma red externa que usará el otro compose
+      - dockploy-network  # <-- same external network a different compose file will use
 
 networks:
-  n8n-network:
-    external: true   # <-- esta red debe existir: docker network create n8n-network
+  dockploy-network:
+    external: true      # <-- this network must exist: docker network create dockploy-network
