@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/playwright:v1.56.0-noble
 
 # Buenas prácticas de entorno
-ENV TZ=America/Bogota \
+ENV TZ=Europe/Budapest \
     NODE_ENV=production \
     PLAYWRIGHT_PORT=3000 \
     PLAYWRIGHT_HOST=0.0.0.0
