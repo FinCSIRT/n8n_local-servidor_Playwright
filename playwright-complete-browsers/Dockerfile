@@ -1,46 +1,46 @@
-# Dockerfile para servidor Playwright personalizado
+# Dockerfile for custom Playwright server
 FROM mcr.microsoft.com/playwright:v1.56.0-noble
 
-# Buenas prácticas de entorno
+# Environment best practices
 ENV TZ=Europe/Budapest \
     NODE_ENV=production \
     PLAYWRIGHT_PORT=3000 \
     PLAYWRIGHT_HOST=0.0.0.0
 
-# Instalar dependencias adicionales como root
+# Install additional dependencies as root
 USER root
 RUN apt-get update && \
     apt-get install -y --no-install-recommends curl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Establecer directorio de trabajo
+# Set working directory
 WORKDIR /home/pwuser
 
-# Crear script de inicio personalizado
+# Create custom start-up script
 RUN cat > /home/pwuser/start-playwright-server.sh << 'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
 
 echo "🎭 Playwright Browser Server"
 echo "=========================="
-echo "Usuario: $(whoami)"
-echo "Directorio: $(pwd)"
+echo "User: $(whoami)"
+echo "Directory: $(pwd)"
 echo "Playwright CLI: $(npx playwright --version)"
-echo "Puerto: ${PLAYWRIGHT_PORT:-3000}"
+echo "Port: ${PLAYWRIGHT_PORT:-3000}"
 echo "Host: ${PLAYWRIGHT_HOST:-0.0.0.0}"
 echo
-echo "WebSocket Endpoint disponible en:"
+echo "WebSocket Endpoint available at:"
 echo "  ws://${PLAYWRIGHT_HOST:-0.0.0.0}:${PLAYWRIGHT_PORT:-3000}/"
 echo
-echo "Navegadores disponibles:"
+echo "Available browsers:"
 ls -la /ms-playwright/ | grep -E "(chromium|firefox|webkit)" | head -3 || true
 echo "=========================="
 echo
 
-echo "🚀 Iniciando servidor Playwright..."
-# Usamos la versión incluida en la imagen base (1.54.0),
-# evitando descargas en runtime y garantizando el match de versiones.
+echo "🚀 Starting Playwright server..."
+# We use the version included in the base image (matching v1.56.0),
+# avoiding runtime downloads and ensuring version match.
 exec npx playwright run-server \
   --port "${PLAYWRIGHT_PORT:-3000}" \
   --host "${PLAYWRIGHT_HOST:-0.0.0.0}"
@@ -49,15 +49,15 @@ EOF
 RUN chmod +x /home/pwuser/start-playwright-server.sh && \
     chown pwuser:pwuser /home/pwuser/start-playwright-server.sh
 
-# Cambiar a usuario pwuser (el que trae la imagen oficial)
+# Switch to pwuser (the user from the official image)
 USER pwuser
 
-# Exponer puerto
+# Expose port
 EXPOSE 3000
 
-# Healthcheck (usa curl, que quedó instalado como root en el sistema)
+# Healthcheck (uses curl, which was installed as root in the system)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
   CMD curl -fsS http://localhost:3000/json/version -o /dev/null || exit 1
 
-# Comando de inicio
+# Start command
 CMD ["/home/pwuser/start-playwright-server.sh"]
