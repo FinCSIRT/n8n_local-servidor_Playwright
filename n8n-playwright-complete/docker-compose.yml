@@ -32,8 +32,8 @@ services:
 
       # --- Playwright ---
       - PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=true
-      # Asegúrate en tu Dockerfile de usar playwright-core@1.55.0 para empatar con el server
-
+      # Ensure your Dockerfile uses playwright-core@1.55.0 to match the server
+      
       # --- System ---
       - TZ=America/Bogota
       - NODE_OPTIONS=--max-old-space-size=4096
@@ -61,13 +61,13 @@ services:
       start_period: 60s
 
     networks:
-      - n8n-network
+      - dokploy-network
 
 volumes:
   n8n_data:
     driver: local
 
 networks:
-  n8n-network:
+  dokploy-network:
     external: true
-    name: n8n-network
+    name: dokploy-network
